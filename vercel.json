@@ -1,8 +1,5 @@
 {
-  "beforeFiles": [
-    { "source": "/api/(.*)", "destination": "https://openscout-tau.vercel.app/api/$1" }
-  ],
   "redirects": [
-    { "source": "/(.*)", "destination": "https://gitworth-landing.vercel.app/", "permanent": true }
+    { "source": "/((?!api).*)", "destination": "https://gitworth-landing.vercel.app/", "permanent": true }
   ]
 }
