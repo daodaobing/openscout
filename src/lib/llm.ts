@@ -1,7 +1,7 @@
 import { LlmInput, LlmOutput, Opportunity, RiskFactor } from "./types";
 
-const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL = "deepseek/deepseek-chat";
+const API_URL = "https://api.deepseek.com/v1/chat/completions";
+const MODEL = "deepseek-chat";
 
 function buildPrompt(data: LlmInput, lang: "zh" | "en"): string {
   const inst = lang === "zh"
@@ -56,8 +56,6 @@ export async function callLLM(data: LlmInput, lang: "zh" | "en"): Promise<LlmOut
       headers: {
         "Authorization": "Bearer " + apiKey,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://openscout.dev",
-        "X-Title": "OpenScout",
       },
       body: JSON.stringify({
         model: MODEL,

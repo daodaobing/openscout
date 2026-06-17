@@ -18,14 +18,15 @@ export default function Home() {
   const [report, setReport] = React.useState<Report | null>(null);
   const [error, setError] = React.useState("");
   const [lang, setLang] = React.useState<Lang>("en");
+  const lastUrl = React.useRef("");
 
-  async function handleAnalyze(url: string) {
+  async function fetchReport(url: string, langCode: Lang) {
     setState("loading"); setError(""); setReport(null);
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, lang }),
+        body: JSON.stringify({ url: url, lang: langCode }),
       });
       const json = await res.json();
       if (!res.ok) { setState("error"); setError(json.error || "Request failed"); return; }
@@ -36,12 +37,25 @@ export default function Home() {
     }
   }
 
+  function handleAnalyze(url: string) {
+    lastUrl.current = url;
+    fetchReport(url, lang);
+  }
+
+  function handleToggleLang() {
+    const newLang = lang === "en" ? "zh" : "en";
+    setLang(newLang);
+    if (lastUrl.current) {
+      fetchReport(lastUrl.current, newLang);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-mono">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <span className="text-sm font-bold tracking-tight">{t("app.name", lang)}</span>
-          <button onClick={() => setLang(lang === "en" ? "zh" : "en")}
+          <button onClick={handleToggleLang}
             className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
             {t("lang.toggle", lang)}
           </button>
