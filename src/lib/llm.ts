@@ -5,24 +5,21 @@ const MODEL = "deepseek-chat";
 
 function buildPrompt(data: LlmInput, lang: "zh" | "en"): string {
   const inst = lang === "zh"
-    ? "你是一个开源项目商业化分析师。分析以下 GitHub 开源项目，输出结构化 JSON。只输出 JSON，不要 markdown。"
-    : "You are an open-source commercialization analyst. Analyze the following GitHub project and output structured JSON. Output JSON only, no markdown.";
+    ? "你是一个开源项目商业化分析师。分析以下 GitHub 开源项目。所有文本字段使用中文回答。输出结构化 JSON。只输出 JSON，不要 markdown。"
+    : "You are an open-source commercialization analyst. Analyze the following GitHub project and output structured JSON. All text values must be in English. Output JSON only, no markdown.";
 
-  const jsonExample = JSON.stringify({
-    painPoint: "...",
-    userValue: "high|medium|low",
-    enterpriseWillingness: "high|medium|low",
-    marketSize: "large|medium|small",
-    competitionLevel: "low|medium|high",
-    marketMaturity: "early|growth|crowded",
-    top3: [{ name: "...", score: 95, reason: "..." }],
-    notRecommended: [{ name: "...", score: 30, reason: "..." }],
-    oneLineVerdict: "...",
-    recommendedDirection: "...",
-    mvpCycleWeeks: 6,
-    riskLevel: "low|medium|high",
-    riskFactors: [{ type: "license|technical|market|business", severity: "low|medium|high", description: "..." }],
-  }, null, 2);
+  const example = lang === "zh"
+    ? { painPoint: "开发者需要...但现有方案...", userValue: "high", enterpriseWillingness: "high", marketSize: "large", competitionLevel: "medium", marketMaturity: "growth",
+        top3: [{ name: "企业私有部署", score: 95, reason: "企业付费能力强，客单价高" }],
+        notRecommended: [{ name: "直接复制项目", score: 30, reason: "已高度竞争缺乏差异化" }],
+        oneLineVerdict: "值得投入，但建议聚焦企业垂直场景", recommendedDirection: "企业知识库 Agent", mvpCycleWeeks: 6, riskLevel: "medium",
+        riskFactors: [{ type: "license", severity: "low", description: "MIT 协议无限制" }] }
+    : { painPoint: "Developers need... but existing...", userValue: "high", enterpriseWillingness: "high", marketSize: "large", competitionLevel: "medium", marketMaturity: "growth",
+        top3: [{ name: "Enterprise Private Deployment", score: 95, reason: "Enterprise willing to pay high for self-hosted solutions" }],
+        notRecommended: [{ name: "Direct Clone", score: 30, reason: "Highly competitive, no differentiation" }],
+        oneLineVerdict: "Worth investing, focus on enterprise vertical", recommendedDirection: "Enterprise Knowledge Base Agent", mvpCycleWeeks: 6, riskLevel: "medium",
+        riskFactors: [{ type: "license", severity: "low", description: "MIT allows free use" }] };
+  const jsonExample = JSON.stringify(example, null, 2);
 
   return `${inst}
 
