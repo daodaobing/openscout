@@ -1,70 +1,57 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 
 export default function AnalyzePage() {
-  const params = useParams();
-  const owner = params?.owner as string;
-  const repo = params?.repo as string;
-  const fullName = owner + "/" + repo;
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState("");
 
   useEffect(() => {
-    if (!fullName || fullName === "/") return;
-    fetch("/api/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: fullName, lang: "en" }),
-    })
-      .then((r) => r.json())
-      .then((d) => { setReport(d); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [fullName]);
+    const path = window.location.pathname;
+    const parts = path.split("/").filter(Boolean);
+    if (parts.length >= 3) {
+      const name = parts[parts.length - 2] + "/" + parts[parts.length - 1];
+      setFullName(name);
+      fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: name, lang: "en" }),
+      })
+        .then((r) => r.json())
+        .then((d) => { setReport(d); setLoading(false); })
+        .catch(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   if (loading) {
     return (
-      <main style={{ maxWidth: 900, margin: "40px auto", padding: "0 20px", fontFamily: "system-ui, sans-serif", minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#999" }}>Loading analysis...</p>
+      <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px", fontFamily: "system-ui, sans-serif", background: "#fafbfc", color: "#0f0f1a" }}>
+        <p style={{ color: "#999", textAlign: "center", paddingTop: 80 }}>Analyzing {fullName || "..."}</p>
       </main>
     );
   }
 
   if (!report || !report.openscoutScore) {
     return (
-      <main style={{ maxWidth: 900, margin: "40px auto", padding: "0 20px", fontFamily: "system-ui, sans-serif" }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700 }}>GitWorth — {fullName}</h1>
-        <p style={{ color: "#6b7280", marginTop: 12 }}>Analysis unavailable. Try again later.</p>
-        <p style={{ marginTop: 8 }}><a href="https://gitworth-landing.vercel.app/" style={{ color: "#7c3aed" }}>Back to GitWorth</a></p>
+      <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px", fontFamily: "system-ui, sans-serif" }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700 }}>GitWorth — {fullName}</h1>
+        <p style={{ color: "#6b7280", marginTop: 12 }}>Analysis unavailable. Please try again.</p>
       </main>
     );
   }
 
-  const basics = report.projectBasics || {};
-  const cv = report.commercialValue || {};
-  const mon = report.monetizationStatus || {};
-  const opp = report.opportunityAnalysis || {};
-  const risk = report.riskAnalysis || {};
   const score = report.openscoutScore || 0;
-
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px", fontFamily: "system-ui, sans-serif", background: "#fafbfc", color: "#0f0f1a" }}>
-      <a href="https://gitworth-landing.vercel.app/" style={{ color: "#7c3aed", textDecoration: "none", fontSize: 14 }}>← GitWorth</a>
-
-      <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "24px 0 8px" }}>
-        <span style={{ fontSize: 48, fontWeight: 700 }}>{score}</span>
-        <span style={{ color: "#999", fontSize: 20 }}>/ 100</span>
-        <span style={{ fontSize: 14, fontWeight: 600, padding: "4px 12px", borderRadius: 6, background: score >= 70 ? "#ecfdf5" : score >= 40 ? "#fef3c7" : "#fef2f2", color: score >= 85 ? "#7c3aed" : score >= 70 ? "#059669" : "#d97706" }}>
-          {report.openscoutLabel === "focus" ? "Focus" : report.openscoutLabel === "recommended" ? "Worth Building" : report.openscoutLabel === "watch" ? "Watch" : "Not Recommended"}
-        </span>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "24px 0 8px" }}>
+        <span style={{ fontSize: 40, fontWeight: 700 }}>{score}</span>
+        <span style={{ color: "#999", fontSize: 18 }}>/ 100</span>
       </div>
-      {report.oneLineVerdict && <p style={{ fontSize: 16, color: "#6b7280", fontStyle: "italic", marginBottom: 24 }}>"{report.oneLineVerdict}"</p>}
-
-      <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>{fullName}</h2>
-      {basics.description && <p style={{ color: "#6b7280", marginBottom: 12 }}>{basics.description}</p>}
-
-      <p style={{ fontSize: 12, color: "#999", borderTop: "1px solid #e5e7eb", paddingTop: 16, marginTop: 24 }}>
+      <h2 style={{ fontSize: 24, fontWeight: 700 }}>{fullName}</h2>
+      <p style={{ fontSize: 12, color: "#999", marginTop: 20 }}>
         Generated by <a href="https://gitworth-landing.vercel.app/" style={{ color: "#7c3aed" }}>GitWorth</a>
       </p>
     </main>
