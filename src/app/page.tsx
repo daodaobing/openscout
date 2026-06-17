@@ -51,12 +51,12 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-mono">
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-mono">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <span className="text-sm font-bold tracking-tight">{t("app.name", lang)}</span>
           <button onClick={handleToggleLang}
-            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+            className="text-xs text-gray-400 hover:text-gray-700 transition-colors">
             {t("lang.toggle", lang)}
           </button>
         </div>
@@ -64,7 +64,7 @@ export default function Home() {
         {state === "idle" && (
           <div className="pt-16 text-center">
             <h2 className="text-2xl font-bold mb-2">{t("app.name", lang)}</h2>
-            <p className="text-zinc-500 text-sm mb-8">{t("app.slogan", lang)}</p>
+            <p className="text-gray-400 text-sm mb-8">{t("app.slogan", lang)}</p>
             <SearchBar onAnalyze={handleAnalyze} lang={lang} />
           </div>
         )}
@@ -85,9 +85,9 @@ export default function Home() {
 
         {state === "error" && (
           <div className="text-center pt-16">
-            <div className="text-red-400 text-sm mb-4">{error}</div>
+            <div className="text-red-600 text-sm mb-4">{error}</div>
             <button onClick={() => setState("idle")}
-              className="text-xs text-zinc-500 hover:text-zinc-300 underline">
+              className="text-xs text-gray-400 hover:text-gray-700 underline">
               Try again
             </button>
           </div>

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OpenScout — Evaluate Before You Build",
+  title: "GitWorth — Evaluate Before You Build",
   description: "Analyze any open-source project's commercial potential in seconds. Enter a GitHub repo URL and get a structured report.",
 };
 

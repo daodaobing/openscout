@@ -19,8 +19,8 @@ export default function LoadingState({ lang }: { lang: Lang }) {
   return (
     <div className="max-w-xl mx-auto space-y-4">
       {phases.map((p, i) => (
-        <div key={p} className={`flex items-center gap-3 text-sm ${i <= active ? "text-zinc-300" : "text-zinc-700"}`}>
-          <span className={`w-4 h-4 rounded-full border ${i < active ? "bg-green-500 border-green-500" : i === active ? "border-yellow-400 animate-pulse" : "border-zinc-700"}`} />
+        <div key={p} className={`flex items-center gap-3 text-sm ${i <= active ? "text-gray-700" : "text-gray-300"}`}>
+          <span className={`w-4 h-4 rounded-full border ${i < active ? "bg-green-500 border-green-500" : i === active ? "border-yellow-400 animate-pulse" : "border-gray-200"}`} />
           {t(p, lang)}
         </div>
       ))}

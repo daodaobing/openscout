@@ -1,7 +1,7 @@
 type TranslationMap = Record<string, string>;
 
 const zh: TranslationMap = {
-  "app.name": "OpenScout",
+  "app.name": "GitWorth",
   "app.slogan": "Evaluate Before You Build",
   "search.placeholder": "https://github.com/owner/repo",
   "search.button": "分析",
@@ -56,7 +56,7 @@ const zh: TranslationMap = {
 };
 
 const en: TranslationMap = {
-  "app.name": "OpenScout",
+  "app.name": "GitWorth",
   "app.slogan": "Evaluate Before You Build",
   "search.placeholder": "https://github.com/owner/repo",
   "search.button": "Analyze",
