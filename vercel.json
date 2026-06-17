@@ -1,5 +1,5 @@
 {
   "redirects": [
-    { "source": "/((?!api).*)", "destination": "https://gitworth-landing.vercel.app/", "permanent": true }
+    { "source": "/((?!api|analyze).*)", "destination": "https://gitworth-landing.vercel.app/", "permanent": true }
   ]
 }
