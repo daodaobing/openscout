@@ -5,6 +5,30 @@ import { callLLM } from "@/lib/llm";
 import { calculateScore } from "@/lib/scorer";
 import type { Report, ProjectBasics, CommercialValue, MonetizationStatus, OpportunityAnalysis, RiskAnalysis, ThirdPartyProduct, LlmInput } from "@/lib/types";
 
+// In-memory log store (shared between GET and POST in same file/process)
+const logStore: any[] = [];
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const mode = url.searchParams.get("mode");
+  if (mode === "log") {
+    const total = logStore.length;
+    const countries: Record<string, number> = {};
+    const repos: Record<string, number> = {};
+    logStore.forEach((e) => {
+      countries[e.country] = (countries[e.country] || 0) + 1;
+      repos[e.repo] = (repos[e.repo] || 0) + 1;
+    });
+    return NextResponse.json({
+      total,
+      countries: Object.entries(countries).sort((a, b) => b[1] - a[1]).slice(0, 20),
+      repos: Object.entries(repos).sort((a, b) => b[1] - a[1]).slice(0, 30),
+      recent: logStore.slice(-20).reverse(),
+    });
+  }
+  return NextResponse.json({ error: "use ?mode=log" }, { status: 400 });
+}
+
 function parseRepoUrl(input: string): string {
   const m = input.match(/github\.com\/([^/]+)\/([^/\s?#]+)/);
   if (m) return m[1] + "/" + m[2];
@@ -152,6 +176,13 @@ export async function POST(request: Request) {
       opportunityAnalysis: oppAnalysis,
       riskAnalysis,
     };
+
+    logStore.push({
+      repo: fullName,
+      timestamp: new Date().toISOString(),
+      country: request.headers.get("x-vercel-ip-country") || "unknown",
+    });
+    if (logStore.length > 500) logStore.splice(0, logStore.length - 500);
 
     return NextResponse.json(report);
   } catch (err: any) {
